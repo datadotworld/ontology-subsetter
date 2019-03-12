@@ -1,0 +1,14 @@
+# Docker Compose file for FIBO subset webhook application
+
+version: '3'
+services:
+  webhook:
+    image: fibo-subset-webhook
+    container_name: fibo-subset-webhook
+    build: .
+    ports:
+      - "80:5000"
+    env_file:
+      - config.env
+    environment:
+      - DW_AUTH_TOKEN

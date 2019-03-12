@@ -1,0 +1,6 @@
+subset.py
+__pycache__
+.project
+.pydevproject
+config.env
+
