@@ -9,8 +9,7 @@ RUN apk add --update curl && \
 
 COPY *.py /subset-webhook/
 
-# Eventually, grab the official release version of the subset.py "treeshaker" module
-# RUN curl -O https://raw.githubusercontent.com/edmcouncil/ontology-publisher/master/publisher/lib/subset.py
+RUN curl -Os https://raw.githubusercontent.com/edmcouncil/ontology-publisher/master/publisher/lib/subset.py
 
 WORKDIR /subset-webhook
 
