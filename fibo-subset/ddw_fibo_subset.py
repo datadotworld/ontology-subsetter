@@ -17,25 +17,25 @@ def getDataDotWorldHeaders():
     return {"Authorization": "Bearer " + token}
 
 class DataDotWorldOntologySource(OntologySource):
-    
+
     def __init__(self, dataset):
         self.dataset = dataset
-    
+
     def getGraphList(self, verbose):
-        
+
         ret = []
-        
+
         headers = getDataDotWorldHeaders()
-        
+
         resp = requests.get("https://api.data.world/v0/datasets/" + self.dataset, headers=headers)
-        
+
         if (resp.status_code == 400):
             raise Exception("Dataset " + self.dataset + " does not exist")
         elif (resp.status_code != 200):
             raise Exception("Error retrieving dataset from data.world, http status code: " + resp.status_code)
-        
+
         datasetInfo = resp.json()
-        
+
         for f in datasetInfo['files']:
             fileName = f['name']
             match = re.match("(.+\\.)(rdf|nt|ttl|xml)$", fileName)
@@ -52,31 +52,31 @@ class DataDotWorldOntologySource(OntologySource):
                     ret.append(TBCGraph().parse(data=fileData, format=match.group(2)))
                 else:
                     print('status code ' + str(resp.status_code) + " downloading " + fileName)
-                    
-                    
+
+
         return ret
-    
+
 class DataDotWorldSubsetSink(SubsetSink):
-    
+
     def __init__(self, dataset, file):
         self.dataset = dataset
         self.file = file
-        
-    def saveSubset(self, subsetData, ontologyURI, fmt, verbose):
-        
+
+    def saveSubset(self, subsetData, ontologyURI, fmt, verbose, log):
+
         headers = getDataDotWorldHeaders()
         headers['Content-Type'] ='application/octet-stream'
-        
+
         subsetData = bytes(subsetData, 'utf-8')
-        
+
         resp = requests.put("https://api.data.world/v0/uploads/" + self.dataset + "/files/" + self.file, headers=headers, data=subsetData)
-        
+
         if (resp.status_code == 400):
             raise Exception("Dataset " + self.dataset + " does not exist")
         elif (resp.status_code != 200):
             raise Exception("File upload failed for subset file " + self.dataset + ":" + self.file + ", http status code: " + str(resp.status_code))
-                            
-                            
+
+
 if __name__ == '__main__':
 
     argParser = argparse.ArgumentParser()
@@ -89,22 +89,21 @@ if __name__ == '__main__':
     argParser.add_argument('-v', '--verbose', dest='verbose', action='store_true', default=False, help='Print dianostic/progress info')
     argParser.add_argument('-f', '--format', help='Subset format (default is ttl/turtle)', default='turtle')
     args = argParser.parse_args()
-    
+
     headers = getDataDotWorldHeaders()
     resp = requests.get("https://api.data.world/v0/file_download/" + args.seeds_dataset + "/" + args.seeds_file, headers=headers)
-    
+
     if (resp.status_code == 400):
         print("Dataset/file " + args.seeds_dataset + "/" + args.seeds_file + " does not exist on data.world, exiting")
         sys.exit(-1)
     elif (resp.status_code != 200):
         print("Error accessing seeds file " + args.seeds_dataset + "/" + args.seeds_file + " on data.world, http status code: " + resp.status_code)
         sys.exit(-1)
-        
+
     seeds = resp.text.splitlines()
-    
+
     ontologySource = DataDotWorldOntologySource(args.ontology_dataset)
     destination = DataDotWorldSubsetSink(args.destination_dataset, args.destination_file)
 
     f = Factor(ontologySource, args.base, args.verbose)
     f.prime(seedList=seeds).writeSubset(destination, args.format)
-    
