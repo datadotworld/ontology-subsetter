@@ -1,6 +1,6 @@
 ### data.world FIBO Subset Generation Utility / Webhook Callback
 
-This code was initially developed in March 2019 as part of an effort at Intuit to create ontologies on data.world
+This code supports creation of ontologies on data.world
 by subsetting [FIBO](https://spec.edmcouncil.org/fibo/).  It leverages a Python module maintained by the EDM
 Council that takes a list of desired RDF subjects (called a "seeds" file) and a base ontology, and produces
 a subset of the ontology containing only those tuples having the seeds as subjects.
