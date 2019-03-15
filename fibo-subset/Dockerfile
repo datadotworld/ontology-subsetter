@@ -9,8 +9,8 @@ RUN apk add --update curl && \
 
 COPY *.py /subset-webhook/
 
-RUN curl -Os https://raw.githubusercontent.com/edmcouncil/ontology-publisher/master/publisher/lib/subset.py
-
 WORKDIR /subset-webhook
+
+RUN curl -Os https://raw.githubusercontent.com/edmcouncil/ontology-publisher/master/publisher/lib/subset.py
 
 CMD ["python", "webhook_app.py"]
