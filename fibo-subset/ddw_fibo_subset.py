@@ -2,6 +2,17 @@
 
 # Obtain the "subset" module from the EDM Council at https://github.com/edmcouncil/ontology-publisher/blob/master/publisher/lib/subset.py
 
+import importlib.util
+
+if importlib.util.find_spec("subset") is None:
+    import urllib.request
+    print('EDM Council subset module not found, downloading from github...')
+    url = "https://raw.githubusercontent.com/edmcouncil/ontology-publisher/master/publisher/lib/subset.py"
+    with urllib.request.urlopen(url) as response, open('subset.py', 'wb') as out_file:
+        data = response.read()
+        out_file.write(data)
+    print('...download of subset.py complete')
+
 from subset import OntologySource, SubsetSink, TBCGraph, Factor, FIBO_FILE_IGNORE_REGEX
 import requests
 import os
