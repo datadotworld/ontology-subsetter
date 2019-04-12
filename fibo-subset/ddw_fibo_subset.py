@@ -43,7 +43,7 @@ class DataDotWorldOntologySource(OntologySource):
         if (resp.status_code == 400):
             raise Exception("Dataset " + self.dataset + " does not exist")
         elif (resp.status_code != 200):
-            raise Exception("Error retrieving dataset from data.world, http status code: " + resp.status_code)
+            raise Exception("Error retrieving dataset from data.world, http status code: " + str(resp.status_code))
 
         datasetInfo = resp.json()
 
@@ -108,7 +108,7 @@ if __name__ == '__main__':
         print("Dataset/file " + args.seeds_dataset + "/" + args.seeds_file + " does not exist on data.world, exiting")
         sys.exit(-1)
     elif (resp.status_code != 200):
-        print("Error accessing seeds file " + args.seeds_dataset + "/" + args.seeds_file + " on data.world, http status code: " + resp.status_code)
+        print("Error accessing seeds file " + args.seeds_dataset + "/" + args.seeds_file + " on data.world, http status code: " + str(resp.status_code))
         sys.exit(-1)
 
     seeds = resp.text.splitlines()
